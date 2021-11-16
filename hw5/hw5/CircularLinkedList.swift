@@ -13,7 +13,23 @@ final class CircularLinkedList<T> {
 
     private final class Node {
         var value: T
-        var next: Node?
+
+        var next: Node? {
+            get {
+                guard let next = _next else {
+                    return parent?.head
+                }
+                return next
+            }
+
+            set {
+                _next = newValue
+            }
+        }
+
+        weak var parent: CircularLinkedList<T>?
+
+        private var _next: Node?
 
         init(value: T) {
             self.value = value
@@ -30,10 +46,11 @@ final class CircularLinkedList<T> {
     func append(_ newValue: T) {
         if tail == nil {
             head = Node(value: newValue)
+            head?.parent = self
             tail = head
         } else {
             let newNode = Node(value: newValue)
-            newNode.next = head
+            newNode.parent = self
             tail?.next = newNode
             tail = newNode
         }
